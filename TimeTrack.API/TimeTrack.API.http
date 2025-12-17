@@ -1,0 +1,37 @@
+@TimeTrack.API_HostAddress = https://localhost:7231
+
+POST {{TimeTrack.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "komaljit@yopmail.com",
+  "password": "Welcome@123",
+  "firstName": "Komaljit",
+  "lastName": "Kaur",
+  "employeeCode": "KK-0123",
+  "department": "QA",
+  "designation": "Senior Engineer",
+  "joiningDate": "2025-12-09T16:01:23.690Z"
+}
+
+###
+
+POST {{TimeTrack.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "komaljit@yopmail.com",
+  "password": "Welcome@123"
+}
+
+###
+
+POST {{TimeTrack.API_HostAddress}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "komaljit@yopmail.com",
+  "otpCode": "844505"
+}
+
+###
