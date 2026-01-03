@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TimeTrack.Application.Common.Interfaces;
+using TimeTrack.Application.Notifications;
+using TimeTrack.Infrastructure.Email;
 using TimeTrack.Infrastructure.Identity;
 using TimeTrack.Infrastructure.Persistence;
 using TimeTrack.Infrastructure.Services;
@@ -36,6 +38,16 @@ namespace TimeTrack.Infrastructure
 
             services.AddScoped<IBellNotificationService, BellNotificationService>();
 
+            // Options
+            services.Configure<EmailProviderOptions>(configuration.GetSection("Email"));
+            services.Configure<SendGridOptions>(configuration.GetSection("SendGrid"));
+
+            // Template renderer
+            services.AddScoped<IEmailTemplateRenderer, DotLiquidEmailTemplateRenderer>();
+
+            // Email sender (SendGrid implementation)
+            services.AddScoped<IEmailSender, SendGridEmailSender>();
+            services.AddScoped<INotificationEmailService, NotificationEmailService>();
             return services;
         }
     }

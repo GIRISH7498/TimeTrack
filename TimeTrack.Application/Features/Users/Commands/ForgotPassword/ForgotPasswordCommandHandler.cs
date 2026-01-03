@@ -11,13 +11,16 @@ namespace TimeTrack.Application.Features.Users.Commands.ForgotPassword
     {
         private readonly IIdentityService _identityService;
         private readonly IApplicationDbContext _context;
+        private readonly INotificationEmailService _notificationEmailService;
 
         public ForgotPasswordCommandHandler(
             IIdentityService identityService,
-            IApplicationDbContext context)
+            IApplicationDbContext context,
+            INotificationEmailService notificationEmailService)
         {
             _identityService = identityService;
             _context = context;
+            _notificationEmailService = notificationEmailService;
         }
 
         public async Task<ForgotPasswordResult> Handle(
@@ -73,6 +76,29 @@ namespace TimeTrack.Application.Features.Users.Commands.ForgotPassword
 
             _context.UserOtps.Add(otp);
             await _context.SaveChangesAsync(cancellationToken);
+
+            var employee = await _context.Employees
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(e => e.UserId == userId.Value, cancellationToken);
+
+            var fullName = $"{employee?.FirstName} {employee?.LastName}".Trim();
+
+            const string templateKey = "User.PasswordReset";
+            const int securityCategoryId = 1;
+
+            var templateData = new Dictionary<string, object?>
+            {
+                ["otpCode"] = otpCode,
+                ["fullName"] = fullName
+            };
+
+            await _notificationEmailService.EnqueueEmailAsync(
+                templateKey: templateKey,
+                categoryId: securityCategoryId,
+                userId: userId.Value,
+                email: request.Email,
+                templateData: templateData,
+                cancellationToken: cancellationToken);
 
             return new ForgotPasswordResult
             {

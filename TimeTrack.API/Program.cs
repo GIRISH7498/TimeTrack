@@ -12,6 +12,7 @@ using TimeTrack.Application;
 using TimeTrack.Application.Common.Behaviours;
 using TimeTrack.Application.Common.Interfaces;
 using TimeTrack.Infrastructure;
+using TimeTrack.Infrastructure.Email;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -53,6 +54,10 @@ try
     builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
     builder.Services.AddSingleton<ISseConnectionManager, SseConnectionManager>();
     builder.Services.AddScoped<INotificationDispatcher, SseNotificationDispatcher>();
+    builder.Services.AddHostedService<NotificationMessageProcessor>();
+    builder.Services.AddScoped<NotificationTemplateSeeder>();
+
+
 
     // JWT Authentication
     var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -81,6 +86,12 @@ try
 
 
     var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<NotificationTemplateSeeder>();
+        await seeder.SeedAsync(CancellationToken.None);
+    }
 
     app.UseSerilogRequestLogging(options =>
     {

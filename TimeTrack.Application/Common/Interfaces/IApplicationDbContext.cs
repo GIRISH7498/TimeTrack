@@ -20,6 +20,7 @@ namespace TimeTrack.Application.Common.Interfaces
         DbSet<NotificationAttempt> NotificationAttempts { get; }
         DbSet<NotificationOutbox> NotificationOutboxes { get; }
         DbSet<BellInboxItem> BellInboxItems { get; }
+        DbSet<NotificationAttachment> NotificationAttachments { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

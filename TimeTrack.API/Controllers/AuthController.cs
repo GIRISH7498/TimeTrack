@@ -117,10 +117,10 @@ namespace TimeTrack.API.Controllers
 //Reset Password
 //Authentication Manager
 //serilog
-
-//pdfgenerator
 //Email with service bus
 //SSE bell
+
+//pdfgenerator
 //Azure Functions
 //SMS
 //Redis Caching

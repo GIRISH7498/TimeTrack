@@ -22,6 +22,7 @@ namespace TimeTrack.Domain.Entities.NotificationModels
         public NotificationRecipient Recipient { get; set; } = default!;
         public NotificationTemplate? Template { get; set; }
         public ICollection<NotificationAttempt> Attempts { get; set; } = new List<NotificationAttempt>();
+        public ICollection<NotificationAttachment> Attachments { get; set; } = new List<NotificationAttachment>();
         public BellInboxItem? BellInboxItem { get; set; }
     }
 }

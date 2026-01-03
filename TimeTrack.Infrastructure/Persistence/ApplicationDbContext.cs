@@ -29,6 +29,7 @@ namespace TimeTrack.Infrastructure.Persistence
         public DbSet<NotificationMessage> NotificationMessages => Set<NotificationMessage>();
         public DbSet<NotificationAttempt> NotificationAttempts => Set<NotificationAttempt>();
         public DbSet<NotificationOutbox> NotificationOutboxes => Set<NotificationOutbox>();
+        public DbSet<NotificationAttachment> NotificationAttachments => Set<NotificationAttachment>();
         public DbSet<BellInboxItem> BellInboxItems => Set<BellInboxItem>();
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -339,6 +340,26 @@ namespace TimeTrack.Infrastructure.Persistence
                     .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasIndex(i => new { i.UserId, i.IsRead });
+            });
+
+            builder.Entity<NotificationAttachment>(b =>
+            {
+                b.ToTable("NotificationAttachments");
+
+                b.HasKey(a => a.AttachmentId);
+
+                b.Property(a => a.FileName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property(a => a.ContentType)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                b.HasOne(a => a.Message)
+                    .WithMany(m => m.Attachments)
+                    .HasForeignKey(a => a.MessageId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
         }
