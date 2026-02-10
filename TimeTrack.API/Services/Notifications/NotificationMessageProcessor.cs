@@ -30,7 +30,6 @@ namespace TimeTrack.API.Services.Notifications
                     var now = DateTime.UtcNow;
 
                     var pendingEmails = await context.NotificationMessages
-                        .AsNoTracking()
                         .AsSplitQuery()
                         .Include(m => m.Recipient)
                         .Include(m => m.Notification)

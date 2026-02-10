@@ -48,6 +48,9 @@ namespace TimeTrack.Infrastructure
             // Email sender (SendGrid implementation)
             services.AddScoped<IEmailSender, SendGridEmailSender>();
             services.AddScoped<INotificationEmailService, NotificationEmailService>();
+
+            services.Configure<EmailQueueOptions>(configuration.GetSection("EmailQueue"));
+            services.AddSingleton<IEmailQueueClient, EmailServiceBusClient>();
             return services;
         }
     }

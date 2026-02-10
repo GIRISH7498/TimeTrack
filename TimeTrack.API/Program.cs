@@ -56,8 +56,7 @@ try
     builder.Services.AddScoped<INotificationDispatcher, SseNotificationDispatcher>();
     builder.Services.AddHostedService<NotificationMessageProcessor>();
     builder.Services.AddScoped<NotificationTemplateSeeder>();
-
-
+    //builder.Services.AddHostedService<EmailQueueProcessor>();
 
     // JWT Authentication
     var jwtSection = builder.Configuration.GetSection("Jwt");

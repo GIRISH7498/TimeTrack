@@ -10,8 +10,10 @@ namespace TimeTrack.Application.Notifications
     public class NotificationEmailService : INotificationEmailService
     {
         private readonly IApplicationDbContext _context;
+        //private readonly IEmailQueueClient _emailQueueClient;
 
-        public NotificationEmailService(IApplicationDbContext context)
+        public NotificationEmailService(
+            IApplicationDbContext context)
         {
             _context = context;
         }
@@ -25,7 +27,7 @@ namespace TimeTrack.Application.Notifications
             CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(email))
-                throw new NotFoundException("Email not found.", nameof(email));
+                throw new ArgumentException("Email is required.", nameof(email));
 
             // 1) Resolve template for Email channel
             var template = await _context.NotificationTemplates
@@ -81,12 +83,13 @@ namespace TimeTrack.Application.Notifications
             notificationEvent.Messages.Add(message);
             recipient.Messages.Add(message);
 
-            // 5) Persist
             _context.NotificationEvents.Add(notificationEvent);
             _context.NotificationRecipients.Add(recipient);
             _context.NotificationMessages.Add(message);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            //await _emailQueueClient.EnqueueAsync(message.MessageId, cancellationToken);
 
             return message.MessageId;
         }
